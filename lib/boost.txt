@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(toeminator_ros_bridge2)
+
+find_package(Boost REQUIRED COMPONENTS system thread)
+
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs tf)
+
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES RobotInterface NetworkInterface
+  CATKIN_DEPENDS roscpp rospy std_msgs tf
+  DEPENDS Boost
+)
+
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
+add_library(RobotInterface src/RobotInterface.cpp)
+target_link_libraries(RobotInterface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_library(NetworkInterface src/NetworkInterface.cpp)
+target_link_libraries(NetworkInterface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(ToeminatorROSBridge src/ToeminatorROSBridge.cpp)
+target_link_libraries(ToeminatorROSBridge
+  RobotInterface
+  NetworkInterface
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
